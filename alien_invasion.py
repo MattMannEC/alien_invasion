@@ -3,6 +3,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     #do you always init self in python ?
@@ -20,6 +21,9 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
+
+        self._create_fleet()
 
     def run_game(self):
         """ Active flag for game """
@@ -27,7 +31,7 @@ class AlienInvasion:
             self.check_events()
             self.ship.update()
             self._update_bullets()
-            self.update_screen()
+            self._update_screen()
 
     def check_events(self):
         # Listen for keyboard and mouse events
@@ -72,13 +76,20 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-                        
-    def update_screen(self):
+
+    def _create_fleet(self):
+        """Creat a fleet of Aliens"""   
+        alien = Alien(self)
+        self.aliens.add(alien)
+
+    def _update_screen(self):
         """Update images on the screen, and flip to the new screen."""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+
+        self.aliens.draw(self.screen)
 
         # Generate new screen
         pygame.display.flip()
